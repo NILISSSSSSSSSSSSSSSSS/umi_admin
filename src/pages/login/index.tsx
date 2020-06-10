@@ -33,7 +33,7 @@ class Login extends React.Component {
       setToken('Auth-Token', data.access_token)
       history.push('/company')
     }).catch((err) => {
-      message.error(err.error)
+      message.error(err.message)
     })
   };
   onReset = () => {

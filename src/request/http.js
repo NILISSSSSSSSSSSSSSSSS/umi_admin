@@ -38,7 +38,7 @@ axios.interceptors.response.use(function (response) {
     }
   }
   // 响应错误处理
-  return Promise.reject(error.response.data)
+  return Promise.reject(error.response)
 })
 
 // GET 请求
