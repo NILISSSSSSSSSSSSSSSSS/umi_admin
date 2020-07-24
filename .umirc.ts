@@ -20,8 +20,8 @@ export default {
       path: '/',
       component: '@/layouts/index',
       routes: [
+        { path: '/tags', component: '@/pages/lifeSciences/tags/index' },
         { path: '/classify', component: '@/pages/lifeSciences/classify/index' },
-        // { path: '/admin', component: 'admin' },
       ],
     },
   ]

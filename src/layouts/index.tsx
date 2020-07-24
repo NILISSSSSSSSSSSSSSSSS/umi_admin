@@ -11,6 +11,7 @@ export default function Index(props: any) {
     </div>
     <div className={styles.right}>
       <Header />
+      <div style={{ padding: 20 }}>{props.children}</div>
     </div>
   </div>
 }

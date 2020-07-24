@@ -11,6 +11,7 @@
     "experimentalDecorators": true,
     "baseUrl": "./",
     "strict": true,
+    "noImplicitAny": false,
     "paths": {
       "@/*": [
         "src/*"
