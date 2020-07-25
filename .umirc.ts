@@ -19,9 +19,10 @@ export default {
     {
       path: '/',
       component: '@/layouts/index',
+      breadcrumb: null,
       routes: [
-        { path: '/tags', component: '@/pages/lifeSciences/tags/index' },
-        { path: '/classify', component: '@/pages/lifeSciences/classify/index' },
+        { path: '/tags', breadcrumb: '标签', component: '@/pages/lifeSciences/tags/index' },
+        { path: '/classify', breadcrumb: '分类管理', component: '@/pages/lifeSciences/classify/index' },
       ],
     },
   ]

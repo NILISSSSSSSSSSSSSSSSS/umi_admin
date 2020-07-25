@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-export default function Index(props: any) {
+import React, { useState, createContext } from 'react';
+//===关键代码
+const CountContext = createContext()
+
+function Index() {
   const [count, setCount] = useState(0);
-
-  const currentCount = useRef(0);
-
-  currentCount.current = count;
-
-  const handleClick = () => {
-    setTimeout(() => {
-      setCount(currentCount.current + 1);
-    }, 3000);
-  };
 
   return (
     <div>
-      <p>{count}</p>
-      <button onClick={() => setCount(count + 1)}>
-        setCount
-          </button>
-      <button onClick={handleClick}>
-        Delay setCount
-          </button>
+      <p>You clicked {count} times</p>
+      <button onClick={() => { setCount(count + 1) }}>click me</button>
+      {/*======关键代码 */}
+      <CountContext.Provider value={count}>
+      </CountContext.Provider>
+
     </div>
-  );
+  )
 }
+export default Index;
+

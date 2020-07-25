@@ -1,8 +1,11 @@
-import { Input, Button, Table, Pagination } from 'antd';
+import { Input, Button, Table, Pagination, Popconfirm, message, Menu, Dropdown, Breadcrumb } from 'antd';
 import React, { useState, useEffect } from 'react'
+import CreatTag from './components/creatTag'
 import apiList from '@/request/api.js'
 interface Form {
-  name: String,
+  name: string,
+  description: string,
+  id: string
 }
 export default function Index(props: any) {
   const [filterData, setFilterData] = useState({ name: '' })
@@ -10,9 +13,11 @@ export default function Index(props: any) {
   const [page, setPage] = useState({
     page: 1,
     per_page: 10,
-    total: 0
   })
+  const [total, setTotal] = useState(1); // 页码
   const [loading, setLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState<Form>({ name: '', description: '', id: '' });
   // 选择搜索条件
   const handleInput = (event: any) => {
     event.persist()
@@ -21,48 +26,67 @@ export default function Index(props: any) {
       name: event.target.value
     }
     ))
+
   }
-  const changePage = (cc: number) => {
+  const changePage = (current: number, pageSize: any) => {
     setPage((prevState) => ({
       ...prevState,
-      page: cc,
+      page: current,
     }
     ))
+    getList({ page: current, per_page: pageSize })
   }
-  const changeSize = (current: number, pageSize: number) => {
+  const changeSize = (current: number, pageSize: any) => {
     setPage((pre) => (
       {
         ...pre,
         per_page: pageSize
       }
     ))
+    getList({ page: current, per_page: pageSize })
+  }
+  const searchCom = () => {
+    setPage({
+      page: 1,
+      per_page: 10,
+    })
+    getList({
+      page: 1,
+      per_page: 10, ...filterData
+    })
+  }
+  const ediet = (val: number, row?: any) => {
+    if (val == 1) setFormData({ name: '', description: '', id: '' })
+    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id })
+    setShowModal(true)
+  }
+  const del = (id: number) => {
+    apiList['deleteTags']({ id: id }).then(() => {
+      message.success('删除成功')
+      getList(page)
+    }).catch(err => {
+      message.error(err.data.message)
+    })
+  }
+  const getModalStatus = (val: boolean) => {
+    setShowModal(false)
+    val && getList(page)
   }
   // 获取表格数据
   useEffect(() => {
-    getList()
-  }, [page.page, page.per_page, filterData.name])
-  const getList = () => {
-    setLoading(true)
-    let param = {
-      ...filterData,
-      page: page.page,
-      per_page: page.per_page
-    }
-    for (const item in param) { // 如果没有值则删除字段
-      if (!param[item] && param[item] !== 0) {
-        delete param[item]
+    getList(page)
+  }, [])
+  const getList = (data) => {
+    for (const item in data) { // 如果没有值则删除字段
+      if (!data[item] && data[item] !== 0) {
+        delete data[item]
       }
     }
-    console.log(filterData)
-    apiList.getTagList(param).then(({ data, meta }) => {
+    setLoading(true)
+    apiList.getTagList(data).then(({ data, meta }) => {
       setLoading(false)
       setTableData(data)
-      setPage((prevState) => ({
-        ...prevState,
-        total: meta.pagination.total
-      }
-      ))
-      console.log(page)
+      setTotal(meta.pagination.total)
     }).catch((err: any) => {
       console.log(err)
       setLoading(false)
@@ -91,17 +115,19 @@ export default function Index(props: any) {
       title: '操作',
       dataIndex: 'operate',
       width: '413',
-      render: () => {
+      render: (text: string | number, record: any) => {
         return (
           <div>
             <Button
-              type="primary" className="mr7" >
+              type="primary" className="mr7" onClick={() => ediet(2, record)}>
               编辑
           </Button>
-            <Button
-              type="primary" danger>
-              删除
+            <Popconfirm placement="top" title="确认删除吗" onConfirm={() => { del(record.id) }} okText="Yes" cancelText="No">
+              <Button
+                type="primary" danger>
+                删除
           </Button>
+            </Popconfirm>
           </div>
         )
       }
@@ -111,10 +137,10 @@ export default function Index(props: any) {
     <div className='tableSearch'>
       <div className='tableSearchForm'>
         <Input placeholder="标签名称" onChange={handleInput} />
-        <Button type="primary" className='search'>搜索</Button>
+        <Button type="primary" className='search' onClick={searchCom}>搜索</Button>
       </div>
       <div className="tableSearchCreat">
-        <Button type="primary" className='creat'>创建标签</Button>
+        <Button type="primary" className='creat' onClick={() => ediet(1)}>创建标签</Button>
       </div>
     </div>
     <div className='tableCommon'>
@@ -125,10 +151,10 @@ export default function Index(props: any) {
         pagination={false}
         loading={loading}
         scroll={{ x: 1000, }}
-        rowKey={(record, index) => index}
+        rowKey={(record, index) => index + ""}
       />
       <Pagination
-        total={page.total}
+        total={total}
         showTotal={total => `共 ${total} 条`}
         defaultPageSize={page.per_page}
         defaultCurrent={page.page}
@@ -136,6 +162,6 @@ export default function Index(props: any) {
         onShowSizeChange={changeSize}
       />
     </div>
-
+    <CreatTag showModal={showModal} formData={formData} emit={getModalStatus} />
   </div>
 }
