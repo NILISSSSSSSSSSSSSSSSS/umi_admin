@@ -28,9 +28,9 @@ export default function Index() {
           Option 1
         </Menu.Item> */}
         <SubMenu key="sub1" icon={<MailOutlined />} title="生命科学情报">
-          <Menu.Item key="5" onClick={() => history.push('/tags')}>标签管理
+          <Menu.Item key="5" onClick={() => history.push('/lifeSciences/tags')}>标签管理
           </Menu.Item>
-          <Menu.Item key="6" onClick={() => history.push('/classify')}>分类管理
+          <Menu.Item key="6" onClick={() => history.push('/lifeSciences/classify')}>分类管理
           </Menu.Item>
         </SubMenu>
       </Menu>

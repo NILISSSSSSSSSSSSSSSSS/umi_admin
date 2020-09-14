@@ -21,8 +21,17 @@ export default {
       component: '@/layouts/index',
       breadcrumb: null,
       routes: [
-        { path: '/tags', breadcrumb: '标签', component: '@/pages/lifeSciences/tags/index' },
-        { path: '/classify', breadcrumb: '分类管理', component: '@/pages/lifeSciences/classify/index' },
+        {
+          path: 'lifeSciences',
+          component: '@/pages/lifeSciences/index',
+          breadcrumb: '生命科学情报',
+          routes: [
+            { path: 'tags', breadcrumb: '标签', component: '@/pages/lifeSciences/tags/index' },
+            { path: 'classify', breadcrumb: '分类管理', component: '@/pages/lifeSciences/classify/index' },
+          ]
+        }
+        // { path: '/tags', breadcrumb: '标签', component: '@/pages/lifeSciences/tags/index' },
+        // { path: '/classify', breadcrumb: '分类管理', component: '@/pages/lifeSciences/classify/index' },
       ],
     },
   ]
