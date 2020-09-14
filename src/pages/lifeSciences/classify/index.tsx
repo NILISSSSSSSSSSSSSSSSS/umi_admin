@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Table, Switch, Space, Button } from 'antd';
 import apiList from '@/request/api.js'
+import CreatTag from './components/creatTag'
 const { TabPane } = Tabs;
-
+interface Form {
+  name: string,
+  description: string,
+  id: string
+}
 export default function Index() {
   const [tableData, setTableData] = useState([{}])
   const [checkStrictly, setCheckStrictly] = useState(false);
   const [loading, setLoading] = useState(false)
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState<Form>({ name: '', description: '', id: '' });
   const columns = [
     {
       title: '名称',
@@ -135,22 +142,31 @@ export default function Index() {
   const callback = key => {
     console.log(key);
   }
-  const ediet = (val: number, row?: any) => {
 
+  const getModalStatus = (val: boolean) => {
+    setShowModal(false)
+    // val && getList(page)
   }
+  const ediet = (val: number, row?: any) => {
+    if (val == 1) setFormData({ name: '', description: '', id: '' })
+    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id })
+    setShowModal(true)
+  }
+  return <div>
+    <Tabs defaultActiveKey="1" onChange={callback}>
+      <TabPane tab="文档分类" key="1">
+        <Table
+          columns={columns}
 
-  return <Tabs defaultActiveKey="1" onChange={callback}>
-    <TabPane tab="文档分类" key="1">
-      <Table
-        columns={columns}
-
-        dataSource={tableData}
-        rowKey={record => record.id + ""}
-      />
-    </TabPane>
-    <TabPane tab="专题分类" key="2">
-      专题分类
+          dataSource={tableData}
+          rowKey={record => record.id + ""}
+        />
+      </TabPane>
+      <TabPane tab="专题分类" key="2">
+        专题分类
   </TabPane>
 
-  </Tabs>
+    </Tabs>
+    <CreatTag showModal={showModal} formData={formData} emit={getModalStatus} />
+  </div>
 }
