@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { history } from 'umi';
+import { history, useDispatch } from 'umi';
 import { Form, Input, Button, message } from 'antd';
 import apiList from '@/request/api.js'
 import { setToken } from '@/utils/token'
@@ -22,6 +22,7 @@ const tailLayout = {
 
 export default function Login() {
   const [form] = Form.useForm();
+  const dispatch = useDispatch();
   const onFinish = (values: any) => {
     console.log('Success:', values);
     const param = {
@@ -29,9 +30,28 @@ export default function Login() {
       password: values.pass
     }
     apiList.loginByPassword(param).then((data: any) => {
-      console.log(data)
       setToken('Auth-Token', data.access_token)
-      history.push('/company')
+      new Promise((resolve, reject) => {
+        dispatch({ type: 'user/getUserList', payload: { data: 9527, resolve, reject } });
+      })
+        .then((data) => {
+          history.push('/company')
+        });
+
+      // dispatch({
+      //   type: 'user/getUserList',
+      // }).then(res => {
+      //   history.push('/company')
+      // });
+
+      // apiList.getInfo().then(res => {
+      //   dispatch({
+      //     type: 'user/setUserInfo',
+      //     payload: res,
+      //   });
+      //   history.push('/company')
+      // })
+
     }).catch((err: any) => {
       message.error(err.message)
     })

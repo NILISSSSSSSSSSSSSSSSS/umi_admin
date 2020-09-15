@@ -2,15 +2,23 @@ import React from "react"
 import { Layout, Menu, Breadcrumb, Dropdown } from 'antd';
 import { DownOutlined, LaptopOutlined, NotificationOutlined } from '@ant-design/icons';
 import useBreadcrumbs from 'use-react-router-breadcrumbs';
+import { useStore } from 'umi';
 import Left from './components/Left';
+import { loginOutClear } from '@/utils/tool';
 import styles from './main.less'
 export default function Index(props: any) {
 
   const Header = function (hprop) {
     const breadcrumbs = useBreadcrumbs(hprop.routes, { excludePaths: ['/'] });
+    const store = useStore();
+    const userInfo = store.getState().user.userInfo
+    console.log(userInfo)
+    const loginOut = _ => {
+      loginOutClear()
+    }
     const menu = (
       <Menu>
-        <Menu.Item>
+        <Menu.Item onClick={loginOut}>
           退出
         </Menu.Item>
       </Menu>
@@ -27,7 +35,7 @@ export default function Index(props: any) {
       <div className={styles.userInfo}>
         <Dropdown overlay={menu}>
           <span className="ant-dropdown-link" >
-            Hover me <DownOutlined />
+            {userInfo.name} <DownOutlined />
           </span>
         </Dropdown>
       </div>
