@@ -4,7 +4,6 @@ export interface UserModelState {
   userInfo: object; // 用户信息
 }
 export interface UserModelType {
-  namespace: 'user';
   state: UserModelState;
   effects: {
     getUserList: Effect;
@@ -16,7 +15,6 @@ export interface UserModelType {
   subscriptions: { setup: Subscription };
 }
 const UserModel: UserModelType = {
-  namespace: 'user',
   state: {
     userInfo: JSON.parse(localStorage.getItem('userInfo') || JSON.stringify({ name: "小甘" })),
   },
@@ -26,23 +24,18 @@ const UserModel: UserModelType = {
         const data = yield (apiList.getInfo().then(res => {
           return res
         }))
-        yield put({ type: 'setUserInfo', payload: { userInfo: data } })
+        yield put({ type: 'setUserInfo', payload: data })
         payload.resolve(data);
       }
       catch (error) {
         payload.reject(error);
       }
-      // const data = yield (apiList.getInfo().then(res => {
-      //   return res
-      // }))
-      // console.log(data)
-      // yield put({ type: 'setUserInfo', payload: { userInfo: data } })
     }
   },
   reducers: {
     setUserInfo(state, action) {
-      state.userInfo = action.payload.userInfo || '{}';
-      localStorage.setItem('userInfo', JSON.stringify(action.payload.userInfo))
+      state.userInfo = action.payload || '{}';
+      localStorage.setItem('userInfo', JSON.stringify(action.payload))
     },
 
   },

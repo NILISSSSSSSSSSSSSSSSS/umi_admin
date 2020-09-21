@@ -1,8 +1,8 @@
 import { removeToken } from './token'
-import { history } from 'umi';
+import { history, getDvaApp } from 'umi';
 //* *退出登录
 export function loginOutClear() {
   removeToken()
-  // store.commit('SET_USERINFO', {})
+  getDvaApp()._store.dispatch({ type: 'user/setUserInfo', payload: {} })
   history.push('/login')
 }

@@ -2,18 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Tabs, Table, Switch, Space, Button } from 'antd';
 import apiList from '@/request/api.js'
 import CreatTag from './components/creatTag'
+import { FormData } from './interface.d';
 const { TabPane } = Tabs;
-interface Form {
-  name: string,
-  description: string,
-  id: string
-}
+
 export default function Index() {
-  const [tableData, setTableData] = useState([{}])
-  const [checkStrictly, setCheckStrictly] = useState(false);
+  const [tableData, setTableData] = useState([])
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState<Form>({ name: '', description: '', id: '' });
+  const [formData, setFormData] = useState<FormData>({});
   const columns = [
     {
       title: '名称',
@@ -47,83 +43,6 @@ export default function Index() {
       }
     },
   ];
-
-  const data = [
-    {
-      key: 1,
-      name: 'John Brown sr.',
-      age: 60,
-      address: 'New York No. 1 Lake Park',
-      children: [
-        {
-          key: 11,
-          name: 'John Brown',
-          age: 42,
-          address: 'New York No. 2 Lake Park',
-        },
-        {
-          key: 12,
-          name: 'John Brown jr.',
-          age: 30,
-          address: 'New York No. 3 Lake Park',
-          children: [
-            {
-              key: 121,
-              name: 'Jimmy Brown',
-              age: 16,
-              address: 'New York No. 3 Lake Park',
-            },
-          ],
-        },
-        {
-          key: 13,
-          name: 'Jim Green sr.',
-          age: 72,
-          address: 'London No. 1 Lake Park',
-          children: [
-            {
-              key: 131,
-              name: 'Jim Green',
-              age: 42,
-              address: 'London No. 2 Lake Park',
-              children: [
-                {
-                  key: 1311,
-                  name: 'Jim Green jr.',
-                  age: 25,
-                  address: 'London No. 3 Lake Park',
-                },
-                {
-                  key: 1312,
-                  name: 'Jimmy Green sr.',
-                  age: 18,
-                  address: 'London No. 4 Lake Park',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-    {
-      key: 2,
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ];
-
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys, selectedRows) => {
-  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  //   },
-  //   onSelect: (record, selected, selectedRows) => {
-  //     console.log(record, selected, selectedRows);
-  //   },
-  //   onSelectAll: (selected, selectedRows, changeRows) => {
-  //     console.log(selected, selectedRows, changeRows);
-  //   },
-  // };
   // 获取表格数据
   useEffect(() => {
     getList()
@@ -138,26 +57,28 @@ export default function Index() {
       setLoading(false)
     })
   }
-
-  const callback = key => {
+  const callback = (key: string): void => {
     console.log(key);
   }
-
-  const getModalStatus = (val: boolean) => {
+  const getModalStatus = (val: boolean): void => {
     setShowModal(false)
-    // val && getList(page)
+    // val && getList()
   }
   const ediet = (val: number, row?: any) => {
-    if (val == 1) setFormData({ name: '', description: '', id: '' })
-    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id })
+    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id, parent_id: row.parent_id, sort: row.sort })
     setShowModal(true)
   }
   return <div>
-    <Tabs defaultActiveKey="1" onChange={callback}>
+    <div className='tableSearch'>
+      <div className="tableSearchCreat">
+        <Button type="primary" className='creat' onClick={() => ediet(1)}>创建分类</Button>
+      </div>
+    </div>
+    <Tabs defaultActiveKey="1" onChange={e => { callback(e) }}>
       <TabPane tab="文档分类" key="1">
         <Table
           columns={columns}
-
+          loading={loading}
           dataSource={tableData}
           rowKey={record => record.id + ""}
         />
@@ -167,6 +88,6 @@ export default function Index() {
   </TabPane>
 
     </Tabs>
-    <CreatTag showModal={showModal} formData={formData} emit={getModalStatus} />
+    <CreatTag showModal={showModal} formData={formData} tableData={tableData} emit={getModalStatus} />
   </div>
 }

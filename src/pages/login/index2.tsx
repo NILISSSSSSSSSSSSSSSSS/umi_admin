@@ -22,7 +22,9 @@ const tailLayout = {
 
 export default function Login() {
   const [form] = Form.useForm();
+
   const dispatch = useDispatch();
+  console.log(dispatch)
   const onFinish = (values: any) => {
     console.log('Success:', values);
     const param = {
@@ -31,27 +33,13 @@ export default function Login() {
     }
     apiList.loginByPassword(param).then((data: any) => {
       setToken('Auth-Token', data.access_token)
+
       new Promise((resolve, reject) => {
         dispatch({ type: 'user/getUserList', payload: { data: 9527, resolve, reject } });
       })
         .then((data) => {
           history.push('/company')
         });
-
-      // dispatch({
-      //   type: 'user/getUserList',
-      // }).then(res => {
-      //   history.push('/company')
-      // });
-
-      // apiList.getInfo().then(res => {
-      //   dispatch({
-      //     type: 'user/setUserInfo',
-      //     payload: res,
-      //   });
-      //   history.push('/company')
-      // })
-
     }).catch((err: any) => {
       message.error(err.message)
     })
@@ -60,18 +48,6 @@ export default function Login() {
     form.resetFields();
   };
   const checkUser = (rule: any, value: any, callback: any) => {
-    if (!value && value !== 0) {
-      return Promise.reject('不能为空');
-    }
-    if (value.length > 9) {
-      return Promise.reject('不能大于9');
-    }
-    else {
-      return Promise.resolve();
-    }
-
-  };
-  const checkConfirmPass = (rule: any, value: any, callback: any) => {
     if (!value && value !== 0) {
       return Promise.reject('不能为空');
     }
@@ -109,16 +85,7 @@ export default function Login() {
         <Input.Password />
       </Item>
 
-      < Item
-        name="confirmPass"
-        label="确认密码"
-        rules={
-          [
-            { required: true, validator: checkConfirmPass, trigger: 'blur' }
-          ]}
-      >
-        <Input />
-      </Item>
+
 
       < Item {...tailLayout}>
         <Button type="primary" htmlType="submit">

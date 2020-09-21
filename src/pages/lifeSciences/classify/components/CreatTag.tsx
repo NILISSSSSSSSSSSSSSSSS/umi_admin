@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Form, message } from 'antd';
+import { Modal, Input, Form, message, Cascader } from 'antd';
 import apiList from '@/request/api.js'
+import { FormData } from '../interface.d';
 const layout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
 };
 interface CreatProps {
   showModal: boolean,
-  formData: {
-    name: string,
-    description: string,
-    id: string
-  },
+  formData: FormData,
+  tableData: any,
   emit: (v: boolean) => void
 }
 export default function Index(props: CreatProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     //如果是关闭弹框,则清空值
     if (!props.showModal && props.formData.id) {
@@ -30,15 +29,16 @@ export default function Index(props: CreatProps) {
   //提交表单
   const handleOk = () => {
     form.validateFields().then(v => {
+      console.log(v)
       let api = ''
       let tip = ""
-      let param: any = { name: v.name, description: v.description }
+      let param: any = { name: v.name, description: v.description, parent_id: v.parent_id[0], sort: v.sort }
       if (props.formData.id) {
-        [api, tip] = ['updateTags', '修改成功']
+        [api, tip] = ['updateDocxClass', '修改成功']
         param.id = props.formData.id
       }
       else {
-        [api, tip] = ['addTags', '新增成功']
+        [api, tip] = ['createDocxClass', '新增成功']
       }
       setLoading(true)
       apiList[api](param).then(() => {
@@ -56,11 +56,18 @@ export default function Index(props: CreatProps) {
     form.setFieldsValue({
       name: '',
       description: '',
-      id: ''
+      parent_id: '',
+      sort: '',
+      id: '',
     })
   }
   const handleCancel = () => {
     props.emit(false)
+  }
+
+
+  const onChange = (value: any) => {
+    console.log(value)
   }
   const title = props.formData.id ? '编辑分类' : '创建分类'
   return (
@@ -74,12 +81,20 @@ export default function Index(props: CreatProps) {
         okText='确定'
         cancelText="取消"
         className="commonModal"
+
       >
         <Form {...layout} form={form} name="control-hooks" >
+          <Form.Item initialValue={props.formData.parent_id} name="parent_id" label="父级分类" rules={[{ required: true, message: '请填写父级分类' }]}>
+            {/* <Input /> */}
+            <Cascader fieldNames={{ label: 'name', value: 'id' }} options={props.tableData} onChange={onChange} changeOnSelect />
+          </Form.Item>
           <Form.Item initialValue={props.formData.name} name="name" label="名称" rules={[{ required: true, message: '请填写名称' }]}>
             <Input />
           </Form.Item>
           <Form.Item initialValue={props.formData.description} name="description" label="描述" rules={[{ required: true, message: '请填写描述' }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item initialValue={props.formData.sort} name="sort" label="排序" rules={[{ required: true, message: '请填写排序' }]}>
             <Input />
           </Form.Item>
         </Form>
