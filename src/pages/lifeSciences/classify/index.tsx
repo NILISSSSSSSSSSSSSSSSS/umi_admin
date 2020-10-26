@@ -7,9 +7,20 @@ const { TabPane } = Tabs;
 
 export default function Index() {
   const [tableData, setTableData] = useState([])
+  const [activeIndex, setActiveIndex] = useState('1')
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
+  const tabList = [
+    {
+      keys: '1',
+      label: '文档分类'
+    },
+    {
+      keys: '2',
+      label: '专题分类'
+    }
+  ]
   const columns = [
     {
       title: '名称',
@@ -20,8 +31,8 @@ export default function Index() {
       dataIndex: 'description',
     },
     {
-      title: '文档数量',
-      dataIndex: 'doc_count',
+      title: activeIndex == '1' ? '文档数量' : '专题数量',
+      dataIndex: activeIndex == '1' ? 'doc_count' : 'column_count',
     },
     {
       title: '排序',
@@ -47,25 +58,30 @@ export default function Index() {
   useEffect(() => {
     getList()
   }, [])
-  const getList = () => {
+  const getList = (activeIndex: string = '1') => {
     setLoading(true)
-    apiList.getDocxList().then(({ data, meta }) => {
+    let apiName = activeIndex === '1' ? 'getDocxList' : 'getTheamList'
+    apiList[apiName]().then(({ data, meta }) => {
       console.log(data)
       setLoading(false)
       setTableData(data)
     }).catch(_ => {
+      setTableData([])
       setLoading(false)
     })
   }
   const callback = (key: string): void => {
+    setActiveIndex(key)
     console.log(key);
+    getList(key)
+
   }
   const getModalStatus = (val: boolean): void => {
     setShowModal(false)
-    // val && getList()
+    val && getList(activeIndex)
   }
   const ediet = (val: number, row?: any) => {
-    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id, parent_id: row.parent_id, sort: row.sort })
+    if (val == 2) setFormData({ name: row.name, description: row.description, id: row.id, parent_id: row.parent_id, allId: [...row.path_ids, row.id], sort: row.sort })
     setShowModal(true)
   }
   return <div>
@@ -74,20 +90,20 @@ export default function Index() {
         <Button type="primary" className='creat' onClick={() => ediet(1)}>创建分类</Button>
       </div>
     </div>
-    <Tabs defaultActiveKey="1" onChange={e => { callback(e) }}>
-      <TabPane tab="文档分类" key="1">
-        <Table
-          columns={columns}
-          loading={loading}
-          dataSource={tableData}
-          rowKey={record => record.id + ""}
-        />
-      </TabPane>
-      <TabPane tab="专题分类" key="2">
-        专题分类
-  </TabPane>
-
+    <Tabs defaultActiveKey={activeIndex} onChange={e => { callback(e) }}>
+      {tabList.map((item) => {
+        return (
+          <TabPane tab={item.label} key={item.keys} >
+            <Table
+              columns={columns}
+              loading={loading}
+              dataSource={tableData}
+              rowKey={record => record.id + ""}
+            />
+          </TabPane>
+        )
+      })}
     </Tabs>
-    <CreatTag showModal={showModal} formData={formData} tableData={tableData} emit={getModalStatus} />
+    <CreatTag showModal={showModal} activeIndex={activeIndex} formData={formData} tableData={tableData} emit={getModalStatus} />
   </div>
 }

@@ -32,6 +32,8 @@ export default function Index() {
           </Menu.Item>
           <Menu.Item key="6" onClick={() => history.push('/lifeSciences/classify')}>分类管理
           </Menu.Item>
+          <Menu.Item key="7" onClick={() => history.push('/lifeSciences/doc')}>文档管理
+          </Menu.Item>
         </SubMenu>
       </Menu>
     </div >

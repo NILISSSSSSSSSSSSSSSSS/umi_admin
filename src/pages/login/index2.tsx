@@ -51,8 +51,8 @@ export default function Login() {
     if (!value && value !== 0) {
       return Promise.reject('不能为空');
     }
-    if (value.length > 9) {
-      return Promise.reject('不能大于9');
+    if (value.length > 19) {
+      return Promise.reject('不能大于19');
     }
     else {
       return Promise.resolve();

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .small-img {
+      width: 100px;
+      height: 100px;
+      cursor: pointer;
+    }
+
+    .box {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(0, 0, 0, .5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      display: none;
+    }
+
+    .wrapper {
+      position: relative;
+    }
+
+    .wrapper .close {
+      position: absolute;
+      right: 10px;
+      top: 0;
+      color: white;
+      font-size: 35px;
+      line-height: .7;
+      cursor: pointer;
+    }
+
+    .wrapper img {
+      width: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <img class="small-img" onClick="showImg(true)"
+    src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b66ce61d412a4429987faab008da1399~tplv-k3u1fbpfcp-watermark.image"
+    alt="">
+  <div class="box">
+    <div class="wrapper">
+      <span class="close" onclick="showImg(false)">x</span>
+      <img
+        src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b66ce61d412a4429987faab008da1399~tplv-k3u1fbpfcp-watermark.image"
+        alt="">
+    </div>
+  </div>
+  <script>
+    function showImg(flag) {
+      document.querySelector(".box").style.display = flag ? "flex" : 'none'
+    }
+  </script>
+
+</body>
+
+</html>

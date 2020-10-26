@@ -1,12 +1,9 @@
 import { Input, Button, Table, Pagination, Popconfirm, message, Menu, Dropdown, Breadcrumb } from 'antd';
 import React, { useState, useEffect } from 'react'
+import { FormData } from './interface.d';
 import CreatTag from './components/creatTag'
 import apiList from '@/request/api.js'
-interface Form {
-  name: string,
-  description: string,
-  id: string
-}
+
 export default function Index(props: any) {
   const [filterData, setFilterData] = useState({ name: '' })
   const [tableData, setTableData] = useState([{}])
@@ -17,7 +14,7 @@ export default function Index(props: any) {
   const [total, setTotal] = useState(1); // 页码
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState<Form>({ name: '', description: '', id: '' });
+  const [formData, setFormData] = useState<FormData>({ name: '', description: '', id: '' });
   // 选择搜索条件
   const handleInput = (event: any) => {
     event.persist()

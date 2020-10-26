@@ -14,14 +14,21 @@ body,html{
 /* 全局表格样式 */
  .tableSearch{
    .tableSearchForm{
-    .ant-input{
+     >*{
+      vertical-align: text-bottom;
+     }
+    .ant-input,.ant-select,.ant-picker,.ant-cascader-picker{
       width: 180px;
       height: 36px;
       line-height: 36px;
       border-radius: 2px;
-      &+.ant-input{
+     
+      &+.ant-input,&+.ant-select,&+.ant-picker,&+.ant-cascader-picker{
         margin-left: 10px;
       }
+    }
+    .ant-select-selector{
+      height: 100%!important;
     }
     .search{
       width: 80px;
@@ -71,3 +78,8 @@ body,html{
 .mr7{
    margin-right: 7px;
 } 
+// 
+
+.ant-pagination{
+  margin-top: 20px!important;
+}

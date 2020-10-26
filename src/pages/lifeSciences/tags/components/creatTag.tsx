@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Input, Form, message } from 'antd';
 import apiList from '@/request/api.js'
+import { FormData } from './interface.d';
 const layout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 20 },
 };
 interface CreatProps {
   showModal: boolean,
-  formData: {
-    name: string,
-    description: string,
-    id: string
-  },
+  formData: FormData,
   emit: (v: boolean) => void
 }
 export default function Index(props: CreatProps) {
@@ -23,9 +20,8 @@ export default function Index(props: CreatProps) {
       resetForm()
     }
     //如果是打开,则赋值
-    else {
-      form.setFieldsValue(props.formData)
-    }
+
+    else if (props.showModal) form.setFieldsValue(props.formData)
   }, [props.showModal])
   //提交表单
   const handleOk = () => {

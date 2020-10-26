@@ -1,9 +1,10 @@
 import axios from 'axios'
+import { message } from 'antd';
 import {
   getToken,
   setToken
 } from '../utils/token'
-
+import { loginOutClear } from '../utils/tool'
 // import store from '../store/index.js'
 
 // axios 配置
@@ -18,6 +19,7 @@ axios.interceptors.request.use(function (config) {
   return config
 }, function (error) {
   // 请求错误处理
+  // message.error(error);
   return Promise.reject(error)
 })
 
@@ -31,13 +33,11 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
 
   if (error && error.response && error.response.status === 401) {
-    if (error.response.data.error) {
-      // Message.error(error.response.data.error)
-    } else {
-      // router.push('/login')
-    }
+    loginOutClear()
   }
   // 响应错误处理
+  message.error(error.response.data.error || '响应错误');
+  console.log(error.response.data.error)
   return Promise.reject(error.response)
 })
 

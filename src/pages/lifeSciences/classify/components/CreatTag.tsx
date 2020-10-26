@@ -8,6 +8,7 @@ const layout = {
 };
 interface CreatProps {
   showModal: boolean,
+  activeIndex: string,
   formData: FormData,
   tableData: any,
   emit: (v: boolean) => void
@@ -18,12 +19,12 @@ export default function Index(props: CreatProps) {
 
   useEffect(() => {
     //如果是关闭弹框,则清空值
-    if (!props.showModal && props.formData.id) {
+    if (!props.showModal) {
       resetForm()
     }
     //如果是打开,则赋值
     else {
-      form.setFieldsValue(props.formData)
+      if (props.showModal) form.setFieldsValue(props.formData)
     }
   }, [props.showModal])
   //提交表单
@@ -32,13 +33,15 @@ export default function Index(props: CreatProps) {
       console.log(v)
       let api = ''
       let tip = ""
-      let param: any = { name: v.name, description: v.description, parent_id: v.parent_id[0], sort: v.sort }
+      let param: any = { name: v.name, description: v.description, parent_id: v.allId[0], sort: v.sort }
       if (props.formData.id) {
-        [api, tip] = ['updateDocxClass', '修改成功']
+        api = props.activeIndex === '1' ? 'updateDocxClass' : 'updateTheam'
+        tip = '修改成功'
         param.id = props.formData.id
       }
       else {
-        [api, tip] = ['createDocxClass', '新增成功']
+        api = props.activeIndex === '1' ? 'createDocxClass' : 'createTheam'
+        tip = '新增成功'
       }
       setLoading(true)
       apiList[api](param).then(() => {
@@ -53,10 +56,12 @@ export default function Index(props: CreatProps) {
   }
   // 重置表单
   const resetForm = () => {
+    console.info(form)
     form.setFieldsValue({
       name: '',
       description: '',
       parent_id: '',
+      allId: [],
       sort: '',
       id: '',
     })
@@ -81,11 +86,10 @@ export default function Index(props: CreatProps) {
         okText='确定'
         cancelText="取消"
         className="commonModal"
-
+        forceRender
       >
         <Form {...layout} form={form} name="control-hooks" >
-          <Form.Item initialValue={props.formData.parent_id} name="parent_id" label="父级分类" rules={[{ required: true, message: '请填写父级分类' }]}>
-            {/* <Input /> */}
+          <Form.Item initialValue={props.formData.allId} name="allId" label="父级分类" rules={[{ required: true, message: '请填写父级分类' }]}>
             <Cascader fieldNames={{ label: 'name', value: 'id' }} options={props.tableData} onChange={onChange} changeOnSelect />
           </Form.Item>
           <Form.Item initialValue={props.formData.name} name="name" label="名称" rules={[{ required: true, message: '请填写名称' }]}>
